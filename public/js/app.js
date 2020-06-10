@@ -42,8 +42,16 @@ class ToggleableTimerForm extends React.Component {
     }
 }
 class Timer extends React.Component {
+    constructor(){
+        super();
+        this.onEditClicked = this.onEditClicked.bind(this);
+    }
+
+    onEditClicked() {
+        this.props.editClicked();
+    }
     render() {
-        const { elapsed, title, project } = this.props;
+        const { elapsed, title, project, id } = this.props;
         const elapsedString = helpers.renderElapsedString(elapsed);
         return (
             <div className='ui centered card'>
@@ -59,7 +67,7 @@ class Timer extends React.Component {
                     </div>
                     <div className='extra content'>
                         <span className='right floated edit icon'>
-                            <i className='edit icon'/>
+                            <i onClick={this.onEditClicked} className='edit icon'/>
                         </span>
                         <span className='right floated edit icon'>
                             <i className='trash icon'/>
@@ -74,16 +82,28 @@ class Timer extends React.Component {
     }
 }
 class EditableTimer extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            isEditMode: false
+        };
+        this.onTimerEditClicked = this.onTimerEditClicked.bind(this);
+    }
+    onTimerEditClicked() {
+      this.setState({
+          isEditMode: true
+      })
+    }
+
     render() {
-        const { editFormOpen, title, project, elapsed, runningSince } = this.props;
-        console.log(`TIMER VALUES ${editFormOpen}, ${title}, ${project}`);
-        if (editFormOpen) {
+        const { title, project, elapsed, runningSince, id } = this.props;
+        if (this.state.isEditMode) {
             return (
-                <TimerForm title={title} project={project}/>
+                <TimerForm title={title} project={project} id={id}/>
             );
         } else {
             return (
-                <Timer title={title} project={project} elapsed={elapsed} runningSince={runningSince} />
+                <Timer title={title} project={project} elapsed={elapsed} runningSince={runningSince} id={id} editClicked={this.onTimerEditClicked}/>
             )
         }
     }
@@ -93,10 +113,10 @@ class EditableTimerList extends React.Component {
     render() {
         const { timers } = this.props;
         const result = timers.map(timer => {
-            const { title, project, elapsed, runningSince, editFormOpen } = timer;
+            const { title, project, elapsed, runningSince, editFormOpen, id } = timer;
             return (
                 <EditableTimer
-                    key={uuid.v4()}
+                    id={id}
                     title={title}
                     project={project}
                     elapsed={elapsed}
@@ -122,18 +142,18 @@ class TimersDashboard extends React.Component {
         this.setState({
             timers: [
                 {
+                    id: uuid.v4(),
                     title: 'Learn React',
                     project: 'Web Domination',
                     elapsed: '8986300',
-                    runningSince: null,
-                    editFormOpen: false
+                    runningSince: null
                 },
                 {
+                    id: uuid.v4(),
                     title: 'Learn Extreme Ironing',
                     project: 'Web Domination',
                     elapsed: '3890985',
-                    runningSince: null,
-                    editFormOpen: false
+                    runningSince: null
                 }
             ]
         });
