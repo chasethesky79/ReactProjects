@@ -76,6 +76,7 @@ class Timer extends React.Component {
 class EditableTimer extends React.Component {
     render() {
         const { editFormOpen, title, project, elapsed, runningSince } = this.props;
+        console.log(`TIMER VALUES ${editFormOpen}, ${title}, ${project}`);
         if (editFormOpen) {
             return (
                 <TimerForm title={title} project={project}/>
@@ -88,33 +89,62 @@ class EditableTimer extends React.Component {
     }
 }
 class EditableTimerList extends React.Component {
+
     render() {
-        return (
-            <div id='timers'>
+        const { timers } = this.props;
+        const result = timers.map(timer => {
+            const { title, project, elapsed, runningSince, editFormOpen } = timer;
+            return (
                 <EditableTimer
-                    title='Learn React'
-                    project='Web Domination'
-                    elapsed='8986300'
-                    runningSince={null}
-                    editOpenForm={false}
-                    />
-                <EditableTimer
-                    title='Learn Extreme Ironing'
-                    project='Web Domination'
-                    elapsed='3890985'
-                    runningSince={null}
-                    editOpenForm={true}
-                    />
-            </div>
-        )
+                    key={uuid.v4()}
+                    title={title}
+                    project={project}
+                    elapsed={elapsed}
+                    runningSince={runningSince}
+                    editFormOpen={editFormOpen}
+                />
+            )
+        });
+        return result;
     }
 }
+
 class TimersDashboard extends React.Component {
+
+    constructor(){
+        super();
+        this.state = {
+            timers: []
+        }
+    }
+
+    componentDidMount() {
+        this.setState({
+            timers: [
+                {
+                    title: 'Learn React',
+                    project: 'Web Domination',
+                    elapsed: '8986300',
+                    runningSince: null,
+                    editFormOpen: false
+                },
+                {
+                    title: 'Learn Extreme Ironing',
+                    project: 'Web Domination',
+                    elapsed: '3890985',
+                    runningSince: null,
+                    editFormOpen: false
+                }
+            ]
+        });
+    }
+
     render() {
+        const { timers } = this.state;
         return (
             <div className='ui three centered grid'>
                 <div className='column'>
-                    <EditableTimerList/>
+                    <EditableTimerList timers={timers}/>
                     <ToggleableTimerForm isOpen={false}/>
                 </div>
             </div>
