@@ -25,15 +25,30 @@ class TimerForm extends React.Component {
     }
 }
 class ToggleableTimerForm extends React.Component {
+
+    constructor() {
+        super();
+        this.state = {
+            isOpen: false
+        };
+        this.onOpenClicked = this.onOpenClicked.bind(this);
+    }
+
+    onOpenClicked() {
+        this.setState({
+            isOpen: true
+        })
+    }
+
     render() {
-        if (this.props.isOpen) {
+        if (this.state.isOpen) {
             return (
                 <TimerForm/>
             )
         } else {
             return (
                 <div className='ui basic content center aligned segment'>
-                    <button className='ui basic button icon'>
+                    <button onClick={this.onOpenClicked} className='ui basic button icon'>
                         <i className='plus icon'/>
                     </button>
                 </div>
@@ -42,8 +57,8 @@ class ToggleableTimerForm extends React.Component {
     }
 }
 class Timer extends React.Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.onEditClicked = this.onEditClicked.bind(this);
     }
 
@@ -165,7 +180,7 @@ class TimersDashboard extends React.Component {
             <div className='ui three centered grid'>
                 <div className='column'>
                     <EditableTimerList timers={timers}/>
-                    <ToggleableTimerForm isOpen={false}/>
+                    <ToggleableTimerForm/>
                 </div>
             </div>
         )
