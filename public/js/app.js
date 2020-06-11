@@ -31,14 +31,13 @@ class ToggleableTimerForm extends React.Component {
         this.state = {
             isOpen: false
         };
-        this.onOpenClicked = this.onOpenClicked.bind(this);
     }
 
-    onOpenClicked() {
+    onOpenClicked = () => {
         this.setState({
             isOpen: true
         })
-    }
+    };
 
     render() {
         if (this.state.isOpen) {
@@ -59,12 +58,12 @@ class ToggleableTimerForm extends React.Component {
 class Timer extends React.Component {
     constructor(props){
         super(props);
-        this.onEditClicked = this.onEditClicked.bind(this);
     }
 
-    onEditClicked() {
+    onEditClicked = () => {
         this.props.editClicked();
-    }
+    };
+
     render() {
         const { elapsed, title, project, id } = this.props;
         const elapsedString = helpers.renderElapsedString(elapsed);
@@ -102,13 +101,13 @@ class EditableTimer extends React.Component {
         this.state = {
             isEditMode: false
         };
-        this.onTimerEditClicked = this.onTimerEditClicked.bind(this);
     }
-    onTimerEditClicked() {
+
+    onTimerEditClicked = () => {
       this.setState({
           isEditMode: true
       })
-    }
+    };
 
     render() {
         const { title, project, elapsed, runningSince, id } = this.props;
