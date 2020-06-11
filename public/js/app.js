@@ -1,21 +1,36 @@
 class TimerForm extends React.Component {
+
+    state = {
+        title: this.props.title || '',
+        project: this.props.project || '',
+        id: this.props.id || ''
+    };
+
+    handleSubmitClicked = () => {
+        this.props.onSubmitClicked(this.state);
+    };
+
+    handleChangeEvent = (event) => {
+        const { target: { name, value } } = event;
+        this.setState(Object.assign({}, this.state, { [name]: value}));
+    };
+
     render() {
-        const { title, project } = this.props;
-        const submitText = title ? 'Update' : 'Create';
+        const submitText = this.props.id ? 'Update' : 'Create';
         return (
           <div className='ui centered card'>
               <div className='content'>
                   <div className='ui form'>
                       <div className='field'>
                           <label>Title</label>
-                          <input type='text' defaultValue={title}/>
+                          <input type='text' name='title' value={this.state.title} onChange={this.handleChangeEvent}/>
                       </div>
                       <div className='field'>
                           <label>Project</label>
-                          <input type='text' defaultValue={project}/>
+                          <input type='text' name='project' value={this.state.project} onChange={this.handleChangeEvent}/>
                       </div>
                       <div className='ui two bottom attached buttons'>
-                          <button className='ui basic blue button'>{submitText}</button>
+                          <button onClick={this.handleSubmitClicked} className='ui basic blue button'>{submitText}</button>
                           <button className='ui basic red button'>Cancel</button>
                       </div>
                   </div>
@@ -33,6 +48,13 @@ class ToggleableTimerForm extends React.Component {
         };
     }
 
+    handleFormSubmit = (timer) => {
+        this.setState({
+            isOpen: false
+        })
+        this.props.onTimerSubmitClicked(timer);
+    }
+
     onOpenClicked = () => {
         this.setState({
             isOpen: true
@@ -42,7 +64,7 @@ class ToggleableTimerForm extends React.Component {
     render() {
         if (this.state.isOpen) {
             return (
-                <TimerForm/>
+                <TimerForm onSubmitClicked={this.handleFormSubmit}/>
             )
         } else {
             return (
@@ -113,7 +135,7 @@ class EditableTimer extends React.Component {
         const { title, project, elapsed, runningSince, id } = this.props;
         if (this.state.isEditMode) {
             return (
-                <TimerForm title={title} project={project} id={id}/>
+                <TimerForm title={title} project={project} id={id} onSubmitClicked={this.props.onSubmitBtnClicked}/>
             );
         } else {
             return (
@@ -136,6 +158,7 @@ class EditableTimerList extends React.Component {
                     elapsed={elapsed}
                     runningSince={runningSince}
                     editFormOpen={editFormOpen}
+                    onSubmitBtnClicked={this.props.onTimerSubmitClicked}
                 />
             )
         });
@@ -151,6 +174,14 @@ class TimersDashboard extends React.Component {
             timers: []
         }
     }
+
+    handleSubmitEvent = (timerObj) => {
+        const { id } = timerObj;
+        const timers = !id ? this.state.timers.concat(helpers.newTimer(timerObj)) : [];
+        this.setState({
+            timers
+        })
+    };
 
     componentDidMount() {
         this.setState({
@@ -178,8 +209,8 @@ class TimersDashboard extends React.Component {
         return (
             <div className='ui three centered grid'>
                 <div className='column'>
-                    <EditableTimerList timers={timers}/>
-                    <ToggleableTimerForm/>
+                    <EditableTimerList timers={timers} onTimerSubmitClicked={this.handleSubmitEvent}/>
+                    <ToggleableTimerForm isOpen={false} onTimerSubmitClicked={this.handleSubmitEvent}/>
                 </div>
             </div>
         )
