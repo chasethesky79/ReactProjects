@@ -51,7 +51,7 @@ class ToggleableTimerForm extends React.Component {
     handleFormSubmit = (timer) => {
         this.setState({
             isOpen: false
-        })
+        });
         this.props.onTimerSubmitClicked(timer);
     }
 
@@ -131,11 +131,18 @@ class EditableTimer extends React.Component {
       })
     };
 
+    handleSubmit = (timerObj) => {
+        this.setState({
+            isEditMode: false
+        });
+        this.props.onSubmitBtnClicked(timerObj);
+    };
+
     render() {
         const { title, project, elapsed, runningSince, id } = this.props;
         if (this.state.isEditMode) {
             return (
-                <TimerForm title={title} project={project} id={id} onSubmitClicked={this.props.onSubmitBtnClicked}/>
+                <TimerForm title={title} project={project} id={id} onSubmitClicked={this.handleSubmit}/>
             );
         } else {
             return (
@@ -177,7 +184,8 @@ class TimersDashboard extends React.Component {
 
     handleSubmitEvent = (timerObj) => {
         const { id } = timerObj;
-        const timers = !id ? this.state.timers.concat(helpers.newTimer(timerObj)) : [];
+        const timers = !id ? this.state.timers.concat(helpers.newTimer(timerObj)) :
+            this.state.timers.map(timer => timer.id === id ? Object.assign({}, timer, timerObj) : timer);
         this.setState({
             timers
         })
