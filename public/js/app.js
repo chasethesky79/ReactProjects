@@ -80,6 +80,11 @@ class ToggleableTimerForm extends React.Component {
 class Timer extends React.Component {
     constructor(props){
         super(props);
+        this.state = {
+            elapsed: null,
+            runningSince: null,
+            timerStarted: false
+        }
     }
 
     onEditClicked = () => {
@@ -90,9 +95,34 @@ class Timer extends React.Component {
         this.props.onTimerDeleteClicked(this.props.id)
     };
 
+    startTimer = () => {
+        let elapsed = this.state.elapsed || this.props.elapsed;
+        let runningSince = this.state.runningSince || this.props.runningSince;
+        runningSince = elapsed;
+        this.interval = setInterval(() => {
+            elapsed = elapsed + 1000;
+            this.setState({
+                elapsed,
+                runningSince,
+                timerStarted: true
+            })
+        }, 1000)
+    };
+
+    stopTimer = () => {
+        this.setState({
+            timerStarted: false
+        });
+        if (this.interval) {
+            clearInterval(this.interval)
+        }
+    };
+
     render() {
-        const { elapsed, title, project, id } = this.props;
+        const { title, project } = this.props;
+        const elapsed = this.state.elapsed ? this.state.elapsed : this.props.elapsed;
         const elapsedString = helpers.renderElapsedString(elapsed);
+        const timerBtnText = this.state.timerStarted ? 'Stop': 'Start';
         return (
             <div className='ui centered card'>
                 <div className='content'>
@@ -114,8 +144,8 @@ class Timer extends React.Component {
                         </span>
                     </div>
                 </div>
-                <div className='ui bottom attached basic blue button'>
-                    Start
+                <div onClick={this.state.timerStarted ? this.stopTimer : this.startTimer} className='ui bottom attached basic blue button'>
+                    {timerBtnText}
                 </div>
             </div>
         )
@@ -208,23 +238,10 @@ class TimersDashboard extends React.Component {
     };
 
     componentDidMount() {
-        this.setState({
-            timers: [
-                {
-                    id: uuid.v4(),
-                    title: 'Learn React',
-                    project: 'Web Domination',
-                    elapsed: '8986300',
-                    runningSince: null
-                },
-                {
-                    id: uuid.v4(),
-                    title: 'Learn Extreme Ironing',
-                    project: 'Web Domination',
-                    elapsed: '3890985',
-                    runningSince: null
-                }
-            ]
+        client.getTimers().then(timers => {
+            this.setState({
+                timers
+            })
         });
     }
 
