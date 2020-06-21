@@ -46,7 +46,7 @@ window.client = (function () {
     }).then(checkStatus);
   }
 
-  function startTimer(data) {
+  function startTimer(data, success) {
     return fetch('/api/timers/start', {
       method: 'post',
       body: JSON.stringify(data),
@@ -54,10 +54,11 @@ window.client = (function () {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-    }).then(checkStatus);
+    }).then(checkStatus)
+      .then(response => getTimers(success));
   }
 
-  function stopTimer(data) {
+  function stopTimer(data, success) {
     return fetch('/api/timers/stop', {
       method: 'post',
       body: JSON.stringify(data),
@@ -65,7 +66,8 @@ window.client = (function () {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-    }).then(checkStatus);
+    }).then(checkStatus)
+      .then(response => getTimers(success))
   }
 
   function checkStatus(response) {

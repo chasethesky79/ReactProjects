@@ -78,14 +78,6 @@ class ToggleableTimerForm extends React.Component {
     }
 }
 class Timer extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            elapsed: null,
-            runningSince: null,
-            timerStarted: false
-        }
-    }
 
     onEditClicked = () => {
         this.props.editClicked();
@@ -96,33 +88,25 @@ class Timer extends React.Component {
     };
 
     startTimer = () => {
-        let elapsed = this.state.elapsed || this.props.elapsed;
-        let runningSince = this.state.runningSince || this.props.runningSince;
-        runningSince = elapsed;
-        this.interval = setInterval(() => {
-            elapsed = elapsed + 1000;
-            this.setState({
-                elapsed,
-                runningSince,
-                timerStarted: true
-            })
-        }, 1000)
+        const { id, timerClicked } = this.props;
+      client.startTimer({
+          id,
+          start: Date.now()
+      }, timerClicked)
     };
 
     stopTimer = () => {
-        this.setState({
-            timerStarted: false
-        });
-        if (this.interval) {
-            clearInterval(this.interval)
-        }
+        const { id, timerClicked } = this.props;
+        client.stopTimer({
+            id,
+            stop: Date.now()
+        }, timerClicked)
     };
 
     render() {
-        const { title, project } = this.props;
-        const elapsed = this.state.elapsed ? this.state.elapsed : this.props.elapsed;
+        const { title, project, elapsed, runningSince } = this.props;
         const elapsedString = helpers.renderElapsedString(elapsed);
-        const timerBtnText = this.state.timerStarted ? 'Stop': 'Start';
+        const timerBtnText = !runningSince ? 'Start': 'Stop';
         return (
             <div className='ui centered card'>
                 <div className='content'>
@@ -144,7 +128,7 @@ class Timer extends React.Component {
                         </span>
                     </div>
                 </div>
-                <div onClick={this.state.timerStarted ? this.stopTimer : this.startTimer} className='ui bottom attached basic blue button'>
+                <div onClick={runningSince ? this.stopTimer : this.startTimer} className='ui bottom attached basic blue button'>
                     {timerBtnText}
                 </div>
             </div>
@@ -184,7 +168,7 @@ class EditableTimer extends React.Component {
             );
         } else {
             return (
-                <Timer title={title} project={project} elapsed={elapsed} runningSince={runningSince} id={id} onTimerDeleteClicked={this.handleDelete} editClicked={this.onTimerEditClicked}/>
+                <Timer timerClicked={this.props.onTimerClicked} title={title} project={project} elapsed={elapsed} runningSince={runningSince} id={id} onTimerDeleteClicked={this.handleDelete} editClicked={this.onTimerEditClicked}/>
             )
         }
     }
@@ -205,6 +189,7 @@ class EditableTimerList extends React.Component {
                     editFormOpen={editFormOpen}
                     onSubmitBtnClicked={this.props.onTimerSubmitClicked}
                     onDeleteBtnClicked={this.props.onTimerDeleteClicked}
+                    onTimerClicked={this.props.handleTimerEvent}
                 />
             )
         });
@@ -229,7 +214,6 @@ class TimersDashboard extends React.Component {
 
     handleSubmitEvent = (timerObj) => {
         const { id } = timerObj;
-        let result;
         try {
             if (!id) {
                 client.createTimer(helpers.newTimer(timerObj), this.successCallBack);
@@ -261,7 +245,7 @@ class TimersDashboard extends React.Component {
         return (
             <div className='ui three centered grid'>
                 <div className='column'>
-                    <EditableTimerList timers={timers} onTimerDeleteClicked = {this.handleDeleteEvent} onTimerSubmitClicked={this.handleSubmitEvent}/>
+                    <EditableTimerList handleTimerEvent={this.loadDataFromServer} timers={timers} onTimerDeleteClicked = {this.handleDeleteEvent} onTimerSubmitClicked={this.handleSubmitEvent}/>
                     <ToggleableTimerForm isOpen={false} onTimerSubmitClicked={this.handleSubmitEvent}/>
                 </div>
             </div>
