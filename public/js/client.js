@@ -11,7 +11,7 @@ window.client = (function () {
       .then(success);
   }
 
-  function createTimer(data) {
+  function createTimer(data, success) {
     return fetch('/api/timers', {
       method: 'post',
       body: JSON.stringify(data),
@@ -19,10 +19,11 @@ window.client = (function () {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-    }).then(checkStatus);
+    }).then(checkStatus)
+      .then(response => getTimers(success))
   }
 
-  function updateTimer(data) {
+  function updateTimer(data, success) {
     return fetch('/api/timers', {
       method: 'put',
       body: JSON.stringify(data),
@@ -30,7 +31,8 @@ window.client = (function () {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-    }).then(checkStatus);
+    }).then(checkStatus)
+      .then(response => getTimers(success))
   }
 
   function deleteTimer(data) {

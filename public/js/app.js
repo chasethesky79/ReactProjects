@@ -221,13 +221,24 @@ class TimersDashboard extends React.Component {
         }
     }
 
-    handleSubmitEvent = (timerObj) => {
-        const { id } = timerObj;
-        const timers = !id ? this.state.timers.concat(helpers.newTimer(timerObj)) :
-            this.state.timers.map(timer => timer.id === id ? Object.assign({}, timer, timerObj) : timer);
+    successCallBack = (timers) => {
         this.setState({
             timers
         })
+    };
+
+    handleSubmitEvent = (timerObj) => {
+        const { id } = timerObj;
+        let result;
+        try {
+            if (!id) {
+                client.createTimer(helpers.newTimer(timerObj), this.successCallBack);
+            } else {
+                client.updateTimer(timerObj, this.successCallBack);
+            }
+        } catch (error) {
+            console.log(`Error in saving timer ${JSON.stringify(error)}`);
+        }
     };
 
     handleDeleteEvent = (id) => {
@@ -238,12 +249,12 @@ class TimersDashboard extends React.Component {
     };
 
     componentDidMount() {
-        client.getTimers().then(timers => {
-            this.setState({
-                timers
-            })
-        });
+      this.loadDataFromServer();
     }
+
+    loadDataFromServer = () => {
+        client.getTimers(this.successCallBack);
+    };
 
     render() {
         const { timers } = this.state;
