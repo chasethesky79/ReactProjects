@@ -12,7 +12,7 @@ class TimerForm extends React.Component {
 
     handleChangeEvent = (event) => {
         const { target: { name, value } } = event;
-        this.setState(Object.assign({}, this.state, { [name]: value}));
+        this.setState(prevState => Object.assign({}, prevState, { [name]: value}));
     };
 
     render() {
@@ -242,10 +242,16 @@ class TimersDashboard extends React.Component {
 
     render() {
         const { timers } = this.state;
+        const props = {
+            handleTimerEvent: this.loadDataFromServer,
+            timers,
+            onTimerDeleteClicked: this.handleDeleteEvent,
+            onTimerSubmitClicked: this.handleSubmitEvent
+        };
         return (
             <div className='ui three centered grid'>
                 <div className='column'>
-                    <EditableTimerList handleTimerEvent={this.loadDataFromServer} timers={timers} onTimerDeleteClicked = {this.handleDeleteEvent} onTimerSubmitClicked={this.handleSubmitEvent}/>
+                    <EditableTimerList {...props}/>
                     <ToggleableTimerForm isOpen={false} onTimerSubmitClicked={this.handleSubmitEvent}/>
                 </div>
             </div>
