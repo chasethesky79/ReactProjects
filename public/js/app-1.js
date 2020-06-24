@@ -4,7 +4,7 @@ const divStyle = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  flexDirection: 'column'
+  flexDirection: 'row'
 };
 
 class Switch extends React.Component {
@@ -12,26 +12,29 @@ class Switch extends React.Component {
     payMethod: BTC
   };
 
-  handleChange = (event) => {
-    console.log(`ELEMENT CLICKED ${JSON.stringify(event.target.value)}`);
-    this.setState({
-      payMethod: event.target.value
-    })
+  select = (choice) => {
+    return (event) => {
+      this.setState({
+        payMethod: choice
+      })
+    }
+  };
+
+  renderChoice = (choice) => {
+    let cssClasses = ['choice'];
+    if (this.state.payMethod === choice) {
+       cssClasses = [...cssClasses, styles.active]
+    }
+    return (
+        <div onClick = {this.select(choice)} className={cssClasses}>{choice}</div>
+    )
   };
 
   render() {
-    const message=`You selected ${this.state.payMethod}`;
-    const selectedOption = this.state.payMethod;
     return (
-        <div style={divStyle}>
-          <select
-              value={this.state.payMethod}
-              onChange={this.handleChange}
-          >
-            <option value="CREDITCARD" selected={selectedOption == 'CREDITCARD'}>CREDITCARD</option>
-            <option value="BTC" selected={selectedOption == 'BTC'}>BTC</option>
-          </select>
-          <p>{message}</p>
+        <div className={divStyle}>
+          {this.renderChoice(CREDITCARD)}
+          {this.renderChoice(BTC)}
         </div>
     );
   }
