@@ -1,40 +1,50 @@
 class SignUpSheetComponent extends React.Component {
 
   state = {
-    names: [],
-    name: ''
+    people: [],
+    fields: {
+      name: '',
+      email: ''
+    }
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
-    let { name } = this.state;
-    const names = [...this.state.names, name];
-    name = '';
+    const { name, email } = this.state.fields;
+    const person = { name, email };
+    const people = [...this.state.people, person];
     this.setState({
-      names,
-      name
+      people,
+      fields: {
+          name: '',
+          email: ''
+      }
     });
   };
 
-  handleNameChange = (event) => {
+  handleChange = (event) => {
+      const { fields } = this.state;
+      const { target: { name, value } } = event;
+      fields[name] = value;
       this.setState({
-          name: event.target.value
+          fields
       })
   };
 
   render() {
     return (
         <div>
-        <form onSubmit={this.handleSubmit}>
-          <input placeholder='Name' value={this.state.name} onChange={this.handleNameChange}/>
-          <input type='submit'/>
-        </form>
-        <div>
-          <h3>Names List</h3>
-          <ul>
-            {this.state.names.map((name, i) => <li key={i}>{name}</li>)}
-          </ul>
-        </div>
+            <form onSubmit={this.handleSubmit}>
+              <input placeholder='Name' name="name" value={this.state.fields.name} onChange={this.handleChange}/>
+              <input placeholder='Email' name="email" value={this.state.fields.email} onChange={this.handleChange}/>
+              <input type='submit'/>
+            </form>
+            <div>
+              <h3>Names List</h3>
+              <ul>
+                {this.state.people.map(({ name, email }, i) => <li key={i}>{name}, {email}</li>)}
+              </ul>
+            </div>
         </div>
     )
   }
