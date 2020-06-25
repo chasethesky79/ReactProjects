@@ -10,9 +10,8 @@ class SignUpSheetComponent extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const { name, email } = this.state.fields;
-    const person = { name, email };
-    const people = [...this.state.people, person];
+    const { fields } = this.state;
+    const people = [...this.state.people, fields];
     this.setState({
       people,
       fields: {
