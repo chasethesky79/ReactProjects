@@ -5,13 +5,30 @@ class SignUpSheetComponent extends React.Component {
     fields: {
       name: '',
       email: ''
+    },
+    errors: {
+      name: '',
+      email: ''
     }
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const { fields } = this.state;
-    const people = [...this.state.people, fields];
+    const { fields: { name, email } } = this.state;
+    let errors = {};
+    if (!name) {
+        errors['name'] = 'Name is required';
+    }
+    if (!email) {
+        errors['email'] = 'Email is required';
+    }
+   if (Object.keys(errors).length > 0) {
+      this.setState({
+          errors
+      });
+      return;
+    }
+    const people = [...this.state.people, { name, email }];
     this.setState({
       people,
       fields: {
@@ -22,8 +39,8 @@ class SignUpSheetComponent extends React.Component {
   };
 
   handleChange = (event) => {
-      const { fields } = this.state;
       const { target: { name, value } } = event;
+      const { fields } = this.state;
       fields[name] = value;
       this.setState({
           fields
@@ -34,8 +51,8 @@ class SignUpSheetComponent extends React.Component {
     return (
         <div>
             <form onSubmit={this.handleSubmit}>
-              <input placeholder='Name' name="name" value={this.state.fields.name} onChange={this.handleChange}/>
-              <input placeholder='Email' name="email" value={this.state.fields.email} onChange={this.handleChange}/>
+                <input placeholder='Name' name="name" value={this.state.fields.name} onChange={this.handleChange}/><span className='errorEntry'>{this.state.errors.name}</span>
+              <input placeholder='Email' name="email" value={this.state.fields.email} onChange={this.handleChange}/><span className='errorEntry'>{this.state.errors.email}</span>
               <input type='submit'/>
             </form>
             <div>

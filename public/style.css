@@ -5,3 +5,9 @@
 #content {
   margin-top: 3em;
 }
+
+.errorEntry {
+  margin-left: 10px;
+  margin-right: 10px;
+  color: red;
+}

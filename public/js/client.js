@@ -20,7 +20,7 @@ window.client = (function () {
         'Content-Type': 'application/json',
       },
     }).then(checkStatus)
-      .then(response => getTimers(success))
+      .then(() => getTimers(success))
   }
 
   function updateTimer(data, success) {
@@ -32,7 +32,7 @@ window.client = (function () {
         'Content-Type': 'application/json',
       },
     }).then(checkStatus)
-      .then(response => getTimers(success))
+      .then(() => getTimers(success))
   }
 
   function deleteTimer(data) {
@@ -55,7 +55,7 @@ window.client = (function () {
         'Content-Type': 'application/json',
       },
     }).then(checkStatus)
-      .then(response => getTimers(success));
+      .then(() => getTimers(success));
   }
 
   function stopTimer(data, success) {
@@ -67,7 +67,7 @@ window.client = (function () {
         'Content-Type': 'application/json',
       },
     }).then(checkStatus)
-      .then(response => getTimers(success))
+      .then(() => getTimers(success))
   }
 
   function checkStatus(response) {

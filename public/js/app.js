@@ -1,3 +1,4 @@
+
 class TimerForm extends React.Component {
 
     state = {
@@ -87,12 +88,17 @@ class Timer extends React.Component {
         this.props.onTimerDeleteClicked(this.props.id)
     };
 
-    startTimer = () => {
+    timerStartedSuccess = () => {
         const { id, timerClicked } = this.props;
+        timerClicked(id);
+    };
+
+    startTimer = () => {
+        const { id } = this.props;
       client.startTimer({
           id,
           start: Date.now()
-      }, timerClicked)
+      }, this.timerStartedSuccess)
     };
 
     stopTimer = () => {
@@ -189,7 +195,7 @@ class EditableTimerList extends React.Component {
                     editFormOpen={editFormOpen}
                     onSubmitBtnClicked={this.props.onTimerSubmitClicked}
                     onDeleteBtnClicked={this.props.onTimerDeleteClicked}
-                    onTimerClicked={this.props.handleTimerEvent}
+                    onTimerClicked={this.props.onTimerClicked}
                 />
             )
         });
@@ -225,6 +231,13 @@ class TimersDashboard extends React.Component {
         }
     };
 
+    handleTimerEvent = (id) => {
+        client.getTimers((result) => {
+            const { timers } = this.state;
+            timers[i] = result.find(timer => timer.id === )
+        })
+    };
+
     handleDeleteEvent = (id) => {
         const timers = this.state.timers.filter(timer => timer.id !== id);
         this.setState({
@@ -243,7 +256,7 @@ class TimersDashboard extends React.Component {
     render() {
         const { timers } = this.state;
         const props = {
-            handleTimerEvent: this.loadDataFromServer,
+            onTimerClicked: this.handleTimerEvent,
             timers,
             onTimerDeleteClicked: this.handleDeleteEvent,
             onTimerSubmitClicked: this.handleSubmitEvent
