@@ -15,7 +15,7 @@ class SignUpSheetComponent extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
     const { fields: { name, email } } = this.state;
-    let errors = {};
+    const errors = {};
     if (!name) {
         errors['name'] = 'Name is required';
     }
