@@ -82,10 +82,6 @@ class Parent extends React.Component {
         });
     };
 
-    handleChange = ({name ,value, error}) => {
-
-    };
-
     handleSubmit = (event) => {
         event.preventDefault();
         const people = [...this.state.people, this.state.formObject];
