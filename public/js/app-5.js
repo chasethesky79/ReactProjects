@@ -40,41 +40,29 @@ class Parent extends React.Component {
     };
 
     validateEmail = (event) => {
-        const { target: { name, value }} = event;
+        const { target: { value }} = event;
         const re = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-        if (!re.test(value)) {
-            const errors = Object.assign({}, this.state.errors.email, { email: 'Invalid Email'});
-            this.setState({
-                errors,
-                disabled: true
-            });
-            return 'Invalid Email'
-        }
+        const isInvalid = !re.test(value);
+        this.setState(prevState => ({
+            errors: Object.assign({}, prevState.errors, { email: isInvalid ? 'Invalid Email' : ''})
+        }));
+        return isInvalid ? 'Invalid Email' : '';
     };
 
     validateName = (event) => {
-        const { target: { name, value }} = event;
-        let errors, formObject;
-        if (!value) {
-            errors = Object.assign({}, this.state.errors.name, { name: 'Required'});
-            this.setState({
-                errors,
-                disabled: true
-            });
-            return 'Name Required';
-        }
+        const { target: { value }} = event;
+        this.setState(prevState => ({
+            errors: Object.assign({}, prevState.errors, { name: !value ? 'Required' : ''})
+        }));
+        return !value ? 'Name Required' : '';
     };
 
     updateState = (event) => {
         const { target: { name, value }} = event;
-        const formObject = Object.assign({}, this.state.formObject, {[name]: [value]});
-        const errors = Object.assign({}, this.state.errors, { [name]: ''});
-        const disabled = Object.entries(errors).some(([value])=> value);
-        this.setState({
-            formObject,
-            errors,
-            disabled
-        });
+        this.setState(prevState => ({
+            formObject: Object.assign({}, prevState.formObject, {[name]: [value]}),
+            disabled: Object.entries(prevState.errors).some(([key, value])=> value)
+        }));
     };
 
     handleSubmit = (event) => {
