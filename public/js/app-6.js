@@ -4,7 +4,8 @@ class CourseSelection extends React.Component {
     super(props);
     this.state = {
       departmentSelect: 1,
-      courseSelect: 1
+      courseSelect: 1,
+      _loading: false
     };
   }
 
@@ -17,7 +18,9 @@ class CourseSelection extends React.Component {
     this.setState({
       [name]: [value]
     });
-    this.reintializeSelects(value);
+    if (name === 'departmentSelect') {
+      this.reintializeSelects(value);
+    }
   };
 
   reintializeSelects = (deptId) => {
@@ -40,10 +43,10 @@ class CourseSelection extends React.Component {
         <select name='departmentSelect' value={this.state.departmentSelect} onChange={this.handleChange}>
           {departmentsTemplate}
         </select>
-          <label>Courses</label>
-          <select name='courseSelect' value={this.state.courseSelect} onChange={this.handleChange}>
-            {coursesTemplate}
-          </select>
+        <label>Courses</label>
+        <select name='courseSelect' value={this.state.courseSelect} onChange={this.handleChange}>
+          {coursesTemplate}
+        </select>
         </div>
      )
   }
