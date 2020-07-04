@@ -12,7 +12,6 @@ class Field extends React.Component {
             value,
             error
         });
-        this.props.onChange({ name, value, error});
     };
  render() {
      return (
@@ -99,8 +98,8 @@ class Parent extends React.Component {
         return (
             <div className={'center-content'}>
                 <form onSubmit={this.handleSubmit}>
-                    <Field name="email" validate={this.validateEmail} onChange={this.handleChange} placeholder="Email"/>
-                    <Field name="name" validate={this.validateName} onChange={this.handleChange} placeholder="Name"/>
+                    <Field name="email" validate={this.validateEmail} placeholder="Email"/>
+                    <Field name="name" validate={this.validateName} placeholder="Name"/>
                     <input disabled={this.state.disabled} type='submit'/>
                 </form>
                 <ul>
