@@ -42,11 +42,12 @@ class Parent extends React.Component {
     validateEmail = (event) => {
         const { target: { value }} = event;
         const re = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-        const isInvalid = !re.test(value);
+        const isInvalid = value && !re.test(value);
+        const error = isInvalid ? 'Invalid Email' : !value ? 'Email Required' : '';
         this.setState(prevState => ({
-            errors: Object.assign({}, prevState.errors, { email: isInvalid ? 'Invalid Email' : ''})
+            errors: Object.assign({}, prevState.errors, { email: error })
         }));
-        return isInvalid ? 'Invalid Email' : '';
+        return error;
     };
 
     validateName = (event) => {
