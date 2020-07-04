@@ -6,8 +6,20 @@
   margin-top: 3em;
 }
 
+.center-content {
+  display: flex;
+  justify-content: center;
+}
+
 .errorEntry {
   margin-left: 10px;
   margin-right: 10px;
+}
+
+.input-entry {
+  margin-bottom: 10px;
+}
+
+.errorEntry {
   color: red;
 }
