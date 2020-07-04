@@ -23,3 +23,22 @@
 .errorEntry {
   color: red;
 }
+
+.department-course-select {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 400px;
+  margin: auto;
+}
+
+.department-course-select div {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+.item-select > * {
+  margin-left: 10px;
+}
+

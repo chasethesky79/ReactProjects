@@ -38,15 +38,19 @@ class CourseSelection extends React.Component {
         <option key={c.id} value={c.id}>{c.name}</option>
     ));
     return (
-        <div>
-        <label>Select a department</label>
-        <select name='departmentSelect' value={this.state.departmentSelect} onChange={this.handleChange}>
-          {departmentsTemplate}
-        </select>
-        <label>Courses</label>
-        <select name='courseSelect' value={this.state.courseSelect} onChange={this.handleChange}>
-          {coursesTemplate}
-        </select>
+        <div className={'department-course-select'}>
+          <div className={'item-select'}>
+            <label>Select a department</label>
+            <select name='departmentSelect' value={this.state.departmentSelect} onChange={this.handleChange}>
+              {departmentsTemplate}
+            </select>
+          </div>
+          <div className={'item-select'}>
+            <label>Courses</label>
+            <select name='courseSelect' value={this.state.courseSelect} onChange={this.handleChange}>
+              {coursesTemplate}
+            </select>
+          </div>
         </div>
      )
   }
