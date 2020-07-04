@@ -3,20 +3,28 @@ class CourseSelection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      departmentSelected: 1
+      departmentSelect: 1,
+      courseSelect: 1
     };
   }
 
   componentDidMount() {
-    this.props.reFilterCourses(this.state.departmentSelected);
+    this.reintializeSelects(this.state.departmentSelect);
   }
 
   handleChange = (event) => {
-    const { target: { value: departmentSelected }} = event;
+    const { target: { name, value }} = event;
     this.setState({
-      departmentSelected
+      [name]: [value]
     });
-    this.props.reFilterCourses(departmentSelected)
+    this.reintializeSelects(value);
+  };
+
+  reintializeSelects = (deptId) => {
+    this.props.reFilterCourses(deptId);
+    this.setState((prevState, prevProps) => ({
+      courseSelect: prevProps.courses[0]
+    }));
   };
 
   render() {
@@ -29,11 +37,11 @@ class CourseSelection extends React.Component {
     return (
         <div>
         <label>Select a department</label>
-        <select value={this.state.departmentSelected} onChange={this.handleChange}>
+        <select name='departmentSelect' value={this.state.departmentSelect} onChange={this.handleChange}>
           {departmentsTemplate}
         </select>
           <label>Courses</label>
-          <select>
+          <select name='courseSelect' value={this.state.courseSelect} onChange={this.handleChange}>
             {coursesTemplate}
           </select>
         </div>
