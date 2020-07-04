@@ -6,12 +6,13 @@ class Field extends React.Component {
     };
 
     onChange = (event) => {
-        const { value, name } = event.target;
-        const error = this.props.validate ? this.props.validate(value) : '';
+        const { value } = event.target;
+        const error = this.props.validate ? this.props.validate(event) : '';
         this.setState({
             value,
             error
         });
+        this.props.updateState(event);
     };
  render() {
      return (
@@ -32,37 +33,29 @@ class Parent extends React.Component {
         },
         people : [],
         errors: {
-            nameError: 'Required',
-            emailError: 'Required'
+            name: 'Required',
+            email: 'Required'
         },
         disabled: true
     };
-    validateEmail = (email) => {
+
+    validateEmail = (event) => {
+        const { target: { name, value }} = event;
         const re = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-        let errors, formObject;
-        if (!re.test(email)) {
-            errors = Object.assign({}, this.state.errors.email, { email: 'Invalid Email'});
+        if (!re.test(value)) {
+            const errors = Object.assign({}, this.state.errors.email, { email: 'Invalid Email'});
             this.setState({
                 errors,
                 disabled: true
             });
             return 'Invalid Email'
         }
-        const { name } = this.state.formObject;
-        const { nameError } = this.state.errors;
-        formObject = Object.assign({}, this.state.formObject, { name, email } );
-        errors = Object.assign({}, this.state.errors, { emailError: '', nameError});
-        const disabled = this.state.errors.nameError;
-        this.setState({
-            formObject,
-            errors,
-            disabled
-        });
     };
 
-    validateName = (name) => {
+    validateName = (event) => {
+        const { target: { name, value }} = event;
         let errors, formObject;
-        if (!name) {
+        if (!value) {
             errors = Object.assign({}, this.state.errors.name, { name: 'Required'});
             this.setState({
                 errors,
@@ -70,11 +63,13 @@ class Parent extends React.Component {
             });
             return 'Name Required';
         }
-        const { email } = this.state.formObject;
-        const { emailError } = this.state.errors;
-        formObject = Object.assign({}, this.state.formObject, { name, email } );
-        errors = Object.assign({}, this.state.errors, { nameError: '', emailError });
-        const disabled = this.state.errors.emailError;
+    };
+
+    updateState = (event) => {
+        const { target: { name, value }} = event;
+        const formObject = Object.assign({}, this.state.formObject, {[name]: [value]});
+        const errors = Object.assign({}, this.state.errors, { [name]: ''});
+        const disabled = Object.entries(errors).some(([value])=> value);
         this.setState({
             formObject,
             errors,
@@ -94,8 +89,8 @@ class Parent extends React.Component {
         return (
             <div className={'center-content'}>
                 <form onSubmit={this.handleSubmit}>
-                    <Field name="email" validate={this.validateEmail} placeholder="Email"/>
-                    <Field name="name" validate={this.validateName} placeholder="Name"/>
+                    <Field name="email" validate={this.validateEmail} updateState={this.updateState} placeholder="Email"/>
+                    <Field name="name" validate={this.validateName} updateState={this.updateState}  placeholder="Name"/>
                     <input disabled={this.state.disabled} type='submit'/>
                 </form>
                 <ul>
