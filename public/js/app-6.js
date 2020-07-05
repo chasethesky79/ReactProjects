@@ -4,17 +4,20 @@ class CourseSelection extends React.Component {
     super(props);
     this.state = {
       error: '',
-      departmentSelect: ''
+      departmentSelect: '',
+      courseSelect: '',
+      selections: []
     }
   }
 
   handleChange = (event) => {
     const { target: { name, value }} = event;
     this.setState({
-      [name]: [value]
+      [name]: value
     });
 
     if (name !== 'departmentSelect') {
+      this.updateSelections(value);
       return
     }
     this.reintializeSelects(value);
@@ -22,10 +25,26 @@ class CourseSelection extends React.Component {
 
   reintializeSelects = (name) => {
     this.props.reFilterCourses(name);
-    this.setState((prevState, prevProps) => ({
-      courseSelect: prevProps.courses[0]
-    }));
   };
+
+  componentWillReceiveProps(update) {
+    const { courses } = update;
+    if (courses.length === 0) {
+      return;
+    }
+    const courseSelect = courses[0].name;
+    this.updateSelections(courseSelect);
+  }
+
+  updateSelections(courseSelect) {
+    const { departmentSelect, selections } = this.state;
+    const selection = { departmentSelect, courseSelect };
+    selections.push(selection);
+    this.setState({
+      courseSelect,
+      selections
+    });
+  }
 
   render() {
     const departmentsTemplate = this.props.departments.map(v => (
@@ -34,7 +53,6 @@ class CourseSelection extends React.Component {
     const coursesTemplate = this.props.courses.map(c => (
         <option key={c.id} value={c.name}>{c.name}</option>
     ));
-
     if (this.props.courses.length  === 0) {
       return (
           <div className={'department-course-select'}>
@@ -63,6 +81,9 @@ class CourseSelection extends React.Component {
               </select>
             </div>
             <span style= {{color:'red'}}>{this.state.error}</span>
+            <ul>
+              {this.state.selections.map(({departmentSelect, courseSelect}, index) => <li key={index}>{departmentSelect}, {courseSelect}</li>)}
+            </ul>
           </div>
       )
     }
