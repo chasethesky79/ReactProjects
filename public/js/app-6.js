@@ -14,9 +14,10 @@ class CourseSelection extends React.Component {
       [name]: [value]
     });
 
-    if (name === 'departmentSelect') {
-      this.reintializeSelects(value);
+    if (name !== 'departmentSelect') {
+      return
     }
+    this.reintializeSelects(value);
   };
 
   reintializeSelects = (name) => {
