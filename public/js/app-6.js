@@ -3,7 +3,8 @@ class CourseSelection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: ''
+      error: '',
+      departmentSelect: ''
     }
   }
 
@@ -12,16 +13,6 @@ class CourseSelection extends React.Component {
     this.setState({
       [name]: [value]
     });
-    if (!value) {
-      this.setState({
-        courses: [],
-        error: `${name} required`
-      });
-    } else {
-      this.setState({
-        error: ''
-      })
-    }
 
     if (name === 'departmentSelect') {
       this.reintializeSelects(value);
@@ -33,7 +24,6 @@ class CourseSelection extends React.Component {
     this.setState((prevState, prevProps) => ({
       courseSelect: prevProps.courses[0]
     }));
-    this.props.updateDisabledStatus(!this.state.departmentSelect || !this.state.courseSelect);
   };
 
   render() {
@@ -131,6 +121,12 @@ class Container extends React.Component {
   fetchDepartments = () => this.state.departmentsAndCourses.map(({ department}) => department);
 
   fetchCoursesForDepartment = (deptName) => {
+    if (!deptName) {
+      this.setState({
+        courses: []
+      });
+      return;
+    }
     setTimeout(() => {
       const courses = this.state.departmentsAndCourses.reduce((acc, element) => {
         if (element.department.name === deptName) {
@@ -148,7 +144,7 @@ class Container extends React.Component {
     return (
         <div className={'main-container'}>
           <CourseSelection updateDisabledStatus={this.updateDisabledStatus} departments={this.fetchDepartments()} courses={this.state.courses} reFilterCourses={this.fetchCoursesForDepartment}/>
-          <input disabled={this.state.disabled} type='submit'/>
+          <input disabled={this.state.courses.length === 0} type='submit'/>
         </div>
     )
   }
