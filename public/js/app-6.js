@@ -35,7 +35,6 @@ class CourseSelection extends React.Component {
   };
 
   render() {
-    console.log(`COURSWS ${JSON.stringify(this.state.courses)}`);
     const departmentsTemplate = this.props.departments.map(v => (
         <option key={v.id} value={v.name}>{v.name}</option>
     ));
