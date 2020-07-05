@@ -4,8 +4,7 @@ class CourseSelection extends React.Component {
     super(props);
     this.state = {
       departmentSelect: 1,
-      courseSelect: 1,
-      _loading: false
+      courseSelect: 1
     };
   }
 
@@ -18,13 +17,18 @@ class CourseSelection extends React.Component {
     this.setState({
       [name]: [value]
     });
+    if (!value) {
+      this.setState({
+        courses: []
+      });
+    }
     if (name === 'departmentSelect') {
       this.reintializeSelects(value);
     }
   };
 
-  reintializeSelects = (deptId) => {
-    this.props.reFilterCourses(deptId);
+  reintializeSelects = (name) => {
+    this.props.reFilterCourses(name);
     this.setState((prevState, prevProps) => ({
       courseSelect: prevProps.courses[0]
     }));
@@ -32,10 +36,10 @@ class CourseSelection extends React.Component {
 
   render() {
     const departmentsTemplate = this.props.departments.map(v => (
-        <option key={v.id} value={v.id}>{v.name}</option>
+        <option key={v.id} value={v.name}>{v.name}</option>
     ));
     const coursesTemplate = this.props.courses.map(c => (
-        <option key={c.id} value={c.id}>{c.name}</option>
+        <option key={c.id} value={c.name}>{c.name}</option>
     ));
     return (
         <div className={'department-course-select'}>
@@ -62,9 +66,16 @@ class Container extends React.Component {
     courses: [],
     departmentsAndCourses :[
       {
+        department: {
+          id: null,
+          name: ''
+        },
+        courses:[],
+      },
+      {
         department : {
           id: 1,
-          name: 'Core'
+          name: 'core'
         },
         courses: [{
           id: 1,
@@ -78,7 +89,7 @@ class Container extends React.Component {
       {
         department: {
           id: 2,
-          name: 'Elective'
+          name: 'electives'
         },
         courses: [{
           id: 3,
@@ -89,21 +100,31 @@ class Container extends React.Component {
           name: 'Shader School'
         }]
       }
-    ]
+    ],
+    _loading: false
   };
 
   fetchDepartments = () => this.state.departmentsAndCourses.map(({ department}) => department);
 
-  fetchCoursesForDepartment = (id) => {
+  fetchCoursesForDepartment = (deptName) => {
+    this.setState({
+      _loading: true
+    });
     const courses = this.state.departmentsAndCourses.reduce((acc, element) => {
-      if (element.department.id === Number(id)) {
+      if (element.department.name === deptName) {
         acc = acc.concat(element.courses);
       }
       return acc;
     }, []);
     this.setState({
       courses
-    })
+    });
+    // apiClient(deptName).then(courses => {
+    //   this.setState({
+    //     courses,
+    //     _loading: false
+    //   })
+    // });
   };
 
   render() {
