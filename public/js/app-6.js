@@ -35,28 +35,43 @@ class CourseSelection extends React.Component {
   };
 
   render() {
+    console.log(`COURSWS ${JSON.stringify(this.state.courses)}`);
     const departmentsTemplate = this.props.departments.map(v => (
         <option key={v.id} value={v.name}>{v.name}</option>
     ));
     const coursesTemplate = this.props.courses.map(c => (
         <option key={c.id} value={c.name}>{c.name}</option>
     ));
-    return (
-        <div className={'department-course-select'}>
-          <div className={'item-select'}>
-            <label>Select a department</label>
-            <select name='departmentSelect' value={this.state.departmentSelect} onChange={this.handleChange}>
-              {departmentsTemplate}
-            </select>
+
+    if (this.props.courses.length  === 0) {
+      return (
+          <div className={'department-course-select'}>
+            <div className={'item-select'}>
+              <label>Select a department</label>
+              <select name='departmentSelect' value={this.state.departmentSelect} onChange={this.handleChange}>
+                {departmentsTemplate}
+              </select>
+            </div>
           </div>
-          <div className={'item-select'}>
-            <label>Courses</label>
-            <select name='courseSelect' value={this.state.courseSelect} onChange={this.handleChange}>
-              {coursesTemplate}
-            </select>
+      )
+    } else {
+      return (
+          <div className={'department-course-select'}>
+            <div className={'item-select'}>
+              <label>Select a department</label>
+              <select name='departmentSelect' value={this.state.departmentSelect} onChange={this.handleChange}>
+                {departmentsTemplate}
+              </select>
+            </div>
+            <div className={'item-select'}>
+              <label>Courses</label>
+              <select name='courseSelect' value={this.state.courseSelect} onChange={this.handleChange}>
+                {coursesTemplate}
+              </select>
+            </div>
           </div>
-        </div>
-     )
+      )
+    }
   }
 }
 
