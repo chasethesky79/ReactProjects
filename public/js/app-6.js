@@ -3,8 +3,7 @@ class CourseSelection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      departmentSelect: 1,
-      courseSelect: 1
+      _loading: false
     };
   }
 
@@ -28,11 +27,20 @@ class CourseSelection extends React.Component {
   };
 
   reintializeSelects = (name) => {
+    this.setState({
+      _loading: true
+    });
     this.props.reFilterCourses(name);
     this.setState((prevState, prevProps) => ({
       courseSelect: prevProps.courses[0]
     }));
   };
+
+  componentWillReceiveProps(props) {
+     this.setState({
+       _loading: false
+     })
+  }
 
   render() {
     const departmentsTemplate = this.props.departments.map(v => (
@@ -41,6 +49,10 @@ class CourseSelection extends React.Component {
     const coursesTemplate = this.props.courses.map(c => (
         <option key={c.id} value={c.name}>{c.name}</option>
     ));
+
+    if (this.state._loading) {
+      return <img className={'department-course-select'} alt="loading" src="../img/loading.gif" />;
+    }
 
     if (this.props.courses.length  === 0) {
       return (
@@ -54,7 +66,7 @@ class CourseSelection extends React.Component {
           </div>
       )
     } else {
-      return (
+         return (
           <div className={'department-course-select'}>
             <div className={'item-select'}>
               <label>Select a department</label>
@@ -114,31 +126,23 @@ class Container extends React.Component {
           name: 'Shader School'
         }]
       }
-    ],
-    _loading: false
+    ]
   };
 
   fetchDepartments = () => this.state.departmentsAndCourses.map(({ department}) => department);
 
   fetchCoursesForDepartment = (deptName) => {
-    this.setState({
-      _loading: true
-    });
-    const courses = this.state.departmentsAndCourses.reduce((acc, element) => {
-      if (element.department.name === deptName) {
-        acc = acc.concat(element.courses);
-      }
-      return acc;
-    }, []);
-    this.setState({
-      courses
-    });
-    // apiClient(deptName).then(courses => {
-    //   this.setState({
-    //     courses,
-    //     _loading: false
-    //   })
-    // });
+    setTimeout(() => {
+      const courses = this.state.departmentsAndCourses.reduce((acc, element) => {
+        if (element.department.name === deptName) {
+          acc = acc.concat(element.courses);
+        }
+        return acc;
+      }, []);
+      this.setState({
+        courses
+      });
+    },3000);
   };
 
   render() {
