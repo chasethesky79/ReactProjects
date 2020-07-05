@@ -24,12 +24,17 @@
   color: red;
 }
 
-.department-course-select {
+.department-course-select, .main-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   max-width: 400px;
   margin: auto;
+}
+
+.main-container input {
+  width: 50%;
+  margin: auto
 }
 
 .department-course-select div {

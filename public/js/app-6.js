@@ -3,12 +3,8 @@ class CourseSelection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      _loading: false
-    };
-  }
-
-  componentDidMount() {
-    this.reintializeSelects(this.state.departmentSelect);
+      error: ''
+    }
   }
 
   handleChange = (event) => {
@@ -18,29 +14,27 @@ class CourseSelection extends React.Component {
     });
     if (!value) {
       this.setState({
-        courses: []
+        courses: [],
+        error: `${name} required`
       });
+    } else {
+      this.setState({
+        error: ''
+      })
     }
+
     if (name === 'departmentSelect') {
       this.reintializeSelects(value);
     }
   };
 
   reintializeSelects = (name) => {
-    this.setState({
-      _loading: true
-    });
     this.props.reFilterCourses(name);
     this.setState((prevState, prevProps) => ({
       courseSelect: prevProps.courses[0]
     }));
+    this.props.updateDisabledStatus(!this.state.departmentSelect || !this.state.courseSelect);
   };
-
-  componentWillReceiveProps(props) {
-     this.setState({
-       _loading: false
-     })
-  }
 
   render() {
     const departmentsTemplate = this.props.departments.map(v => (
@@ -50,10 +44,6 @@ class CourseSelection extends React.Component {
         <option key={c.id} value={c.name}>{c.name}</option>
     ));
 
-    if (this.state._loading) {
-      return <img className={'department-course-select'} alt="loading" src="../img/loading.gif" />;
-    }
-
     if (this.props.courses.length  === 0) {
       return (
           <div className={'department-course-select'}>
@@ -62,6 +52,7 @@ class CourseSelection extends React.Component {
               <select name='departmentSelect' value={this.state.departmentSelect} onChange={this.handleChange}>
                 {departmentsTemplate}
               </select>
+              <span style= {{color:'red'}}>{this.state.error}</span>
             </div>
           </div>
       )
@@ -80,6 +71,7 @@ class CourseSelection extends React.Component {
                 {coursesTemplate}
               </select>
             </div>
+            <span style= {{color:'red'}}>{this.state.error}</span>
           </div>
       )
     }
@@ -125,8 +117,15 @@ class Container extends React.Component {
           id: 4,
           name: 'Shader School'
         }]
-      }
-    ]
+      },
+    ],
+    disabled: true
+  };
+
+  updateDisabledStatus = (disabled) => {
+    this.setState({
+      disabled
+    })
   };
 
   fetchDepartments = () => this.state.departmentsAndCourses.map(({ department}) => department);
@@ -147,8 +146,9 @@ class Container extends React.Component {
 
   render() {
     return (
-        <div>
-          <CourseSelection departments={this.fetchDepartments()} courses={this.state.courses} reFilterCourses={this.fetchCoursesForDepartment}/>
+        <div className={'main-container'}>
+          <CourseSelection updateDisabledStatus={this.updateDisabledStatus} departments={this.fetchDepartments()} courses={this.state.courses} reFilterCourses={this.fetchCoursesForDepartment}/>
+          <input disabled={this.state.disabled} type='submit'/>
         </div>
     )
   }
