@@ -134,12 +134,6 @@ class Container extends React.Component {
     disabled: true
   };
 
-  updateDisabledStatus = (disabled) => {
-    this.setState({
-      disabled
-    })
-  };
-
   fetchDepartments = () => this.state.departmentsAndCourses.map(({ department}) => department);
 
   fetchCoursesForDepartment = (deptName) => {
@@ -165,7 +159,7 @@ class Container extends React.Component {
   render() {
     return (
         <div className={'main-container'}>
-          <CourseSelection updateDisabledStatus={this.updateDisabledStatus} departments={this.fetchDepartments()} courses={this.state.courses} reFilterCourses={this.fetchCoursesForDepartment}/>
+          <CourseSelection departments={this.fetchDepartments()} courses={this.state.courses} reFilterCourses={this.fetchCoursesForDepartment}/>
           <input disabled={this.state.courses.length === 0} type='submit'/>
         </div>
     )

@@ -24,18 +24,133 @@ class Field extends React.Component {
    }
 }
 
+class CourseSelection extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: '',
+            departmentSelect: '',
+            courseSelect: '',
+            selections: []
+        }
+    }
+
+    handleChange = (event) => {
+        const { target: { name, value }} = event;
+        this.setState({
+            [name]: value
+        });
+        this.props.updateState(event);
+    };
+
+    componentWillReceiveProps(update) {
+        const { courses } = update;
+        if (courses.length === 0) {
+            return;
+        }
+        const courseSelect = courses[0].name;
+        this.setState({
+            courseSelect
+        })
+    }
+
+    render() {
+        const departmentsTemplate = this.props.departments.map(v => (
+            <option key={v.id} value={v.name}>{v.name}</option>
+        ));
+        const coursesTemplate = this.props.courses.map(c => (
+            <option key={c.id} value={c.name}>{c.name}</option>
+        ));
+        if (this.props.courses.length  === 0) {
+            return (
+                <div className={'department-course-select'}>
+                    <div className={'item-select'}>
+                        <label>Select a department</label>
+                        <select name='departmentSelect' value={this.state.departmentSelect} onChange={this.handleChange}>
+                            {departmentsTemplate}
+                        </select>
+                        <span style= {{color:'red'}}>{this.state.error}</span>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div className={'department-course-select'}>
+                    <div className={'item-select'}>
+                        <label>Select a department</label>
+                        <select name='departmentSelect' value={this.state.departmentSelect} onChange={this.handleChange}>
+                            {departmentsTemplate}
+                        </select>
+                    </div>
+                    <div className={'item-select'}>
+                        <label>Courses</label>
+                        <select name='courseSelect' value={this.state.courseSelect} onChange={this.handleChange}>
+                            {coursesTemplate}
+                        </select>
+                    </div>
+                    <span style= {{color:'red'}}>{this.state.error}</span>
+                    <ul>
+                        {this.state.selections.map(({departmentSelect, courseSelect}, index) => <li key={index}>{departmentSelect}, {courseSelect}</li>)}
+                    </ul>
+                </div>
+            )
+        }
+    }
+}
+
 class Parent extends React.Component {
 
     state = {
         formObject: {
             name: '',
-            email:''
+            email:'',
+            departmentSelect: '',
+            courseSelect: ''
         },
         people : [],
         errors: {
             name: 'Required',
             email: 'Required'
         },
+        courses: [],
+        departmentsAndCourses :[
+            {
+                department: {
+                    id: null,
+                    name: ''
+                },
+                courses:[],
+            },
+            {
+                department : {
+                    id: 1,
+                    name: 'core'
+                },
+                courses: [{
+                    id: 1,
+                    name: 'learnyouncode'
+                },
+                    {
+                        id: 2,
+                        name: 'stream-adventure'
+                    }]
+            },
+            {
+                department: {
+                    id: 2,
+                    name: 'electives'
+                },
+                courses: [{
+                    id: 3,
+                    name: 'Functional JavaScript'
+                },
+                    {
+                        id: 4,
+                        name: 'Shader School'
+                    }]
+            },
+        ],
         disabled: true
     };
 
@@ -60,10 +175,37 @@ class Parent extends React.Component {
 
     updateState = (event) => {
         const { target: { name, value }} = event;
+        if (name === 'departmentSelect') {
+            this.populateCoursesForDepartment(value);
+        }
         this.setState(prevState => ({
-            formObject: Object.assign({}, prevState.formObject, {[name]: [value]}),
-            disabled: Object.entries(prevState.errors).some(([key, value])=> value)
+            formObject: Object.assign({}, prevState.formObject, {[name]: value}),
+            disabled: Object.entries(prevState.errors).some(([key, value])=> value) || this.state.courses.length === 0
         }));
+    };
+
+    fetchDepartments = () => this.state.departmentsAndCourses.map(({ department}) => department);
+
+    populateCoursesForDepartment = (deptName) => {
+        if (!deptName) {
+            this.setState({
+                courses: [],
+                disabled: true
+            });
+            return;
+        }
+        setTimeout(() => {
+            const courses = this.state.departmentsAndCourses.reduce((acc, element) => {
+                if (element.department.name === deptName) {
+                    acc = acc.concat(element.courses);
+                }
+                return acc;
+            }, []);
+            this.setState(prevState => ({
+                courses,
+                disabled: Object.entries(prevState.errors).some(([key, value])=> value)
+            }));
+        },3000);
     };
 
     handleSubmit = (event) => {
@@ -80,6 +222,7 @@ class Parent extends React.Component {
                 <form onSubmit={this.handleSubmit}>
                     <Field name="email" validate={this.validateEmail} updateState={this.updateState} placeholder="Email"/>
                     <Field name="name" validate={this.validateName} updateState={this.updateState}  placeholder="Name"/>
+                    <CourseSelection departments={this.fetchDepartments()} updateState={this.updateState} courses={this.state.courses}/>
                     <input disabled={this.state.disabled} type='submit'/>
                 </form>
                 <ul>
