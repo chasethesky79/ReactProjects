@@ -187,25 +187,19 @@ class Parent extends React.Component {
     fetchDepartments = () => this.state.departmentsAndCourses.map(({ department}) => department);
 
     populateCoursesForDepartment = (deptName) => {
-        if (!deptName) {
-            this.setState({
-                courses: [],
-                disabled: true
-            });
-            return;
-        }
         setTimeout(() => {
-            const courses = this.state.departmentsAndCourses.reduce((acc, element) => {
+            const courses = !deptName ? [] : this.state.departmentsAndCourses.reduce((acc, element) => {
                 if (element.department.name === deptName) {
                     acc = acc.concat(element.courses);
                 }
                 return acc;
             }, []);
-            this.setState(prevState => ({
+            const disabled = !deptName ? true : Object.entries(this.state.errors).some(([key, value])=> value)
+            this.setState(() => ({
                 courses,
-                disabled: Object.entries(prevState.errors).some(([key, value])=> value)
-            }));
-        },3000);
+                disabled
+            }))
+        }, 3000);
     };
 
     handleSubmit = (event) => {
