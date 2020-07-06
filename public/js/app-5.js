@@ -91,12 +91,7 @@ class CourseSelection extends React.Component {
 class Parent extends React.Component {
 
     state = {
-        formObject: {
-            name: '',
-            email:'',
-            departmentSelect: '',
-            courseSelect: ''
-        },
+        formObject: this.resetForm,
         people : [],
         errors: {
             name: 'Required',
@@ -197,12 +192,15 @@ class Parent extends React.Component {
         }, 3000);
     };
 
+    resetForm = () => ({ departmentSelect: '', courseSelect: '', name: '', email: ''});
+
     handleSubmit = (event) => {
         event.preventDefault();
         const people = [...this.state.people, this.state.formObject];
-        this.setState({
-            people
-        });
+        this.setState(prevState => ({
+            people,
+            formObject: Object.assign({}, prevState.formObject, this.resetForm())
+        }));
         client.savePeople(people).then(people => this.setState({
             people
         }));
