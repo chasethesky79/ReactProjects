@@ -86,6 +86,19 @@ window.client = (function () {
     return response.json();
   }
 
+  const loadPeople = () => {
+    return new Promise((resolve) => {
+        resolve(JSON.parse(localStorage.people || '[]'));
+   })
+  };
+
+  const savePeople = (people) => {
+    return new Promise((resolve) => {
+        localStorage.people = JSON.stringify(people);
+        resolve(localStorage.people);
+    })
+  };
+
   return {
     getTimers,
     createTimer,
@@ -93,5 +106,7 @@ window.client = (function () {
     startTimer,
     stopTimer,
     deleteTimer,
+    loadPeople,
+    savePeople
   };
 }());

@@ -203,9 +203,33 @@ class Parent extends React.Component {
         this.setState({
             people
         });
+        client.savePeople(people).then(people => this.setState({
+            people
+        }));
+    };
+
+    componentWillMount() {
+        client.loadPeople().then(people => {
+            this.setState({
+                people
+            })
+        });
     };
 
     render() {
+        console.log(`PEOPLE IN RENDER ${JSON.stringify(this.state.people)}`);
+        if (!this.state.people || this.state.people.length === 0) {
+            return (<div className={'center-content'}>
+                <form onSubmit={this.handleSubmit}>
+                    <Field name="email" validate={this.validateEmail} updateState={this.updateState}
+                           placeholder="Email"/>
+                    <Field name="name" validate={this.validateName} updateState={this.updateState} placeholder="Name"/>
+                    <CourseSelection departments={this.fetchDepartments()} updateState={this.updateState}
+                                     courses={this.state.courses}/>
+                    <input disabled={this.state.disabled} type='submit'/>
+                </form>
+            </div>);
+        }
         return (
             <div className={'center-content'}>
                 <form onSubmit={this.handleSubmit}>
