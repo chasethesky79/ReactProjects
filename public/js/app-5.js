@@ -44,17 +44,6 @@ class CourseSelection extends React.Component {
         this.props.updateState(event);
     };
 
-    componentWillReceiveProps(update) {
-        const { courses } = update;
-        if (courses.length === 0) {
-            return;
-        }
-        const courseSelect = courses[0].name;
-        this.setState({
-            courseSelect
-        })
-    }
-
     render() {
         const departmentsTemplate = this.props.departments.map(v => (
             <option key={v.id} value={v.name}>{v.name}</option>
@@ -114,6 +103,7 @@ class Parent extends React.Component {
             email: 'Required'
         },
         courses: [],
+        _loading: false,
         departmentsAndCourses :[
             {
                 department: {
@@ -175,18 +165,21 @@ class Parent extends React.Component {
 
     updateState = (event) => {
         const { target: { name, value }} = event;
+        this.setState(prevState => ({
+            formObject: Object.assign({}, prevState.formObject, {[name]: value}),
+        }));
+
         if (name === 'departmentSelect') {
             this.populateCoursesForDepartment(value);
         }
-        this.setState(prevState => ({
-            formObject: Object.assign({}, prevState.formObject, {[name]: value}),
-            disabled: Object.entries(prevState.errors).some(([key, value])=> value) || this.state.courses.length === 0
-        }));
     };
 
     fetchDepartments = () => this.state.departmentsAndCourses.map(({ department}) => department);
 
     populateCoursesForDepartment = (deptName) => {
+        this.setState({
+            _loading: true
+        });
         setTimeout(() => {
             const courses = !deptName ? [] : this.state.departmentsAndCourses.reduce((acc, element) => {
                 if (element.department.name === deptName) {
@@ -194,10 +187,12 @@ class Parent extends React.Component {
                 }
                 return acc;
             }, []);
-            const disabled = !deptName ? true : Object.entries(this.state.errors).some(([key, value])=> value)
+            const disabled = !deptName ? true : Object.entries(this.state.errors).some(([key, value])=> value);
             this.setState(() => ({
                 courses,
-                disabled
+                disabled,
+                formObject: Object.assign({}, this.state.formObject, { courseSelect: courses.length === 0 ? '' : courses[0].name }),
+                _loading: false
             }))
         }, 3000);
     };
@@ -220,7 +215,7 @@ class Parent extends React.Component {
                     <input disabled={this.state.disabled} type='submit'/>
                 </form>
                 <ul>
-                    {this.state.people.map(({name, email}, index) => <li key={index}>{name}, {email}</li>)}
+                    {this.state.people.map(({ name, email, departmentSelect, courseSelect }, index) => <li key={index}>{name}, {email}, {departmentSelect}, {courseSelect}</li>)}
                 </ul>
             </div>
         )
