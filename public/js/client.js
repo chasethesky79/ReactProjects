@@ -95,7 +95,7 @@ window.client = (function () {
   const savePeople = (people) => {
     return new Promise((resolve) => {
         localStorage.people = JSON.stringify(people);
-        resolve(localStorage.people);
+        resolve(people);
     })
   };
 

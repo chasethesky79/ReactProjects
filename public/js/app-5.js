@@ -217,7 +217,6 @@ class Parent extends React.Component {
     };
 
     render() {
-        console.log(`PEOPLE IN RENDER ${JSON.stringify(this.state.people)}`);
         if (!this.state.people || this.state.people.length === 0) {
             return (<div className={'center-content'}>
                 <form onSubmit={this.handleSubmit}>
